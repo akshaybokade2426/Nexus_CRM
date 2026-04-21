@@ -1,0 +1,133 @@
+Sanity Tests: A very small, quick subset of tests that you run after a new build is 
+deployed to ensure the application is "sane" and not completely broken. 
+It answers the question: "Can we even begin testing?"
+
+Example: Can the user log in and does the main page load?
+
+Smoke Tests: A broader set of tests that cover the most critical, high-level 
+functionalities (the "happy paths").
+These tests don't check every detail but ensure the main user journeys work. 
+It answers the question: "Is the build stable enough for more in-depth testing?"
+
+Example: Login -> Add an item to cart -> Go to cart -> Start checkout.
+
+Regression Tests: The most comprehensive suite. This includes all smoke tests plus detailed test cases for specific features, edge cases, and negative scenarios. Its goal is to ensure that new code changes have not broken any existing functionality.
+
+Example: Testing every sort option, verifying all user types (standard, locked-out, etc.), testing form validations, removing items from the cart.
+
+
+Our Test Plan for saucedemo.com
+Let's start by creating a critical end-to-end smoke test. This single test will verify the main user journey and will require us to build several new Page Object files.
+
+Our Smoke Test Scenario: "Successful End-to-End Purchase"
+
+Login as standard_user.
+From the Inventory Page, add the "Sauce Labs Backpack" to the cart.
+Verify the cart icon badge updates to "1".
+Navigate to the Shopping Cart Page.
+Verify the "Sauce Labs Backpack" is in the cart.
+Click Checkout.
+On the Checkout Information Page, enter a First Name, Last Name, and Postal Code.
+Click Continue.
+On the Checkout Overview Page, verify the item and total, then click Finish.
+On the Checkout Complete Page, verify the "Thank you for your order!" message.
+Logout successfully.
+
+Step 1: Create the First New Page Object (InventoryPage)
+To automate this flow, we need to create Page Objects for each page we interact with.
+Let's start with the page you see immediately after logging in.
+
+Action: In your pages/ folder, create a new file named inventory_page.py. Add the following code to it.
+
+Now that we have the InventoryPage page object, let's create our new smoke test file and write the first few steps of our end-to-end test.
+
+This part of the test will cover logging in, verifying we are on the inventory page, adding an item to the cart, and verifying the cart icon updates.
+
+What We've Done
+1.Created a new test file and a new test class TestSmokePurchase that inherits from our BaseTest.
+2.Marked the test with @pytest.mark.smoke, so you can run all smoke tests together using 
+pytest -m smoke.
+3.The test successfully logs in and verifies that the user lands on the correct page.
+4.It then uses our new InventoryPage object to add a specific item to the cart and asserts that the little red badge on the cart icon correctly shows "1".
+Our test now successfully gets us to the point where an item is in the cart. 
+Note: It may fail. what to do?
+To prevent this from happening for all future tests, you can set this ENV=demo variable in your Pytest template, as we discussed previously (Run -> Edit Configurations... -> Edit configuration templates...).
+
+The next logical step is to click on the shopping cart icon and verify its contents. 
+To do that, we need to create the CartPage page object.
+
+Step2
+Let's continue building our smoke test. So far, our test successfully logs in and adds an item to the cart. The next logical steps are to:
+
+Click the shopping cart icon.
+Verify the correct item is on the cart page.
+Proceed to checkout.
+To do this, we need to create the CartPage page object.
+
+Step 3: Create the CartPage Page Object
+This class will contain the locators and actions for the shopping cart page.
+
+Action: In your pages/ folder, create a new file named cart_page.py. Add the following code to it.
+
+Step 4: Update the Smoke Test Script
+Now that we have our CartPage, let's update our smoke test to use it. We will add the next step to the test_end_to_end_purchase_happy_path method.
+
+Action: In your tests/test_smoke_journey.py file, update the code to match the version below.
+
+The next step in our smoke test journey is to click the "Checkout" button and fill in the customer's information.
+
+To do this, we need to create the Page Object for the "Checkout: Your Information" screen.
+
+Step 5: Create the CheckoutStepOnePage Page Object
+This class will handle entering the user's details (First Name, Last Name, Postal Code) and clicking continue.
+
+Action: In your pages/ folder, create a new file named checkout_step_one_page.py. Add the following code to it.
+
+Step 6: Update the Smoke Test Script
+Now that we have the CheckoutStepOnePage, let's add the next step to our main smoke test.
+
+Action: In your tests/test_smoke_journey.py file, update the code to include this new step.
+
+
+Let's complete the purchase journey by handling the last two screens:
+
+Checkout Overview: Where we verify the order and click "Finish".
+Checkout Complete: The final "Thank you" page.
+
+Step 7: Create the CheckoutStepTwoPage (Overview)
+This page object will handle the "Checkout: Overview" screen.
+
+Action: In your pages/ folder, create a new file named checkout_step_two_page.py. Add the following code to it.
+Step 8: Create the CheckoutCompletePage
+This is the final page object for the "Thank you" screen.
+
+Action: In your pages/ folder, create a new file named checkout_complete_page.py. Add the following code to it.
+Step 9: Complete the Smoke Test Script
+Now let's put it all together. We will update test_smoke_journey.py to use these new pages and complete our end-to-end test, including a final logout step.
+
+Sanity Test
+
+Step 1: Register a New sanity Marker
+We need to tell Pytest about our new "sanity" test suite.
+
+Action: Open your pytest.ini file and add sanity to your list of markers.
+
+Step 2: Tag Your Existing Tests with Markers
+Now, we will go into our test files and "tag" each test method with the appropriate marker(s). A test can have multiple markers.
+
+Our Strategy:
+
+Sanity: The most basic successful login.
+Smoke: The successful login PLUS the full end-to-end purchase.
+Regression: More detailed cases, like a failed login.
+Action: Let's update your tests/test_login.py file to apply these tags. Notice how test_successful_login belongs to all three categories.
+
+our test_smoke_journey.py already has the @pytest.mark.smoke marker, which is perfect. We can also add @pytest.mark.regression to it, as our full regression should always include the main smoke tests.
+
+Step 3: Run Your New Test Suites
+You can now easily run any suite you want from the command line using the -m flag.
+
+To Run Your SANITY Suite (quickest check):
+This will run only the tests marked as sanity (1 test).
+
+pytest -m sanity

@@ -1,0 +1,40 @@
+# config/config.yaml
+
+browser:
+  default: "chrome"
+  headless: false
+  implicit_wait: 10
+  page_load_timeout: 30
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(filename)s:[%(lineno)d] - [%(levelname)s] - %(message)s"
+  directory: "reports/logs"
+
+# Environment-specific settings for your application
+environments:
+  # The sample automation practice site
+  demo:
+    base_url: "https://thinking-tester-contact-list.herokuapp.com"
+    email: "akshaybokade007@gmail.com"
+    password: "Admin@123"
+
+  # Your actual development environment
+  dev:
+    base_url: "https://thinking-tester-contact-list.herokuapp.com/"
+    email: "akshaybokade007@gmail.com"
+    password: "Admin@123"
+  
+  # Your actual staging environment
+  staging:
+    base_url: "https://thinking-tester-contact-list.herokuapp.com/"
+    email: "akshaybokade007@gmail.com"
+    password: "Admin@123"
+  
+  # Your actual production environment
+  prod:
+    base_url: "https://thinking-tester-contact-list.herokuapp.com/"
+    email: "akshaybokade007@gmail.com"
+    password: "Admin@123"
+
+    wego:

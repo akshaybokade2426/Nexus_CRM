@@ -1,0 +1,44 @@
+# -------------------------
+# Python
+# -------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# -------------------------
+# Virtual Environment
+# -------------------------
+venv/
+.env/
+.env*/
+
+# -------------------------
+# PyCharm / IDE
+# -------------------------
+.idea/
+*.iml
+
+# -------------------------
+# Logs
+# -------------------------
+logs/
+*.log
+
+# -------------------------
+# Reports (Allure / HTML / Screenshots)
+# -------------------------
+reports/
+allure-results/
+allure-report/
+
+# -------------------------
+# Browser Profiles (Playwright / Selenium)
+# -------------------------
+automation_chrome_profile/
+
+# -------------------------
+# OS junk
+# -------------------------
+.DS_Store
+Thumbs.db
